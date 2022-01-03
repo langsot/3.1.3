@@ -1,5 +1,9 @@
 package com.example.demo.models;
 
+import com.fasterxml.jackson.annotation.*;
+import net.bytebuddy.build.ToStringPlugin;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -21,9 +25,12 @@ public class User implements UserDetails {
 
     private int age;
 
-    @ManyToMany
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "userSet_id"),
-                    inverseJoinColumns = @JoinColumn(name = "roles_id"))
+    private String email;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
+//    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "userSet_id"),
+//                    inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles;
 
     public User() {
@@ -49,6 +56,15 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+
     public int getAge() {
         return age;
     }
@@ -58,6 +74,7 @@ public class User implements UserDetails {
     }
 
     public Set<Role> getRoles() {
+
         return roles;
     }
 
@@ -70,11 +87,12 @@ public class User implements UserDetails {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", car='" + password + '\'' +
+                ", password='" + password + '\'' +
                 ", age=" + age +
                 '}';
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -85,26 +103,31 @@ public class User implements UserDetails {
         return password;
     }
 
+    @JsonIgnore
     @Override
     public String getUsername() {
         return name;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;

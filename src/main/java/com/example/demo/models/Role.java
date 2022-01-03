@@ -1,9 +1,10 @@
 package com.example.demo.models;
 
+import com.fasterxml.jackson.annotation.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "role")
@@ -16,9 +17,9 @@ public class Role implements GrantedAuthority {
 
     private String name;
 
-
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> userSet;
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
+    private List<User> usersList;
 
     public Role() {
     }
@@ -42,15 +43,16 @@ public class Role implements GrantedAuthority {
     public void setName(String name) {
         this.name = name;
     }
-
-    public Set<User> getUser() {
-        return userSet;
+//
+//    public List<User> getUser() {
+//        return usersList;
+//    }
+//
+    public void listUser(List<User> user) {
+        this.usersList = user;
     }
 
-    public void setUser(Set<User> user) {
-        this.userSet = user;
-    }
-
+    @JsonIgnore
     @Override
     public String getAuthority() {
         return getName();

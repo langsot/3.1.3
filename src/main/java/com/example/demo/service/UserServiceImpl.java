@@ -1,10 +1,9 @@
 package com.example.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.example.demo.dao.UserDao;
+import com.example.demo.dao.UserRepositories;
 import com.example.demo.models.User;
 
 import javax.transaction.Transactional;
@@ -14,53 +13,46 @@ import java.util.List;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userDao;
+    private final UserRepositories userRepositories;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, @Lazy PasswordEncoder passwordEncoder) {
-        this.userDao = userDao;
+    public UserServiceImpl(UserRepositories userRepositories, PasswordEncoder passwordEncoder) {
+        this.userRepositories = userRepositories;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public List<User> getAll() {
-        return userDao.getAll();
+        return userRepositories.findAll();
     }
 
     @Override
     public void add(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userDao.add(user);
+        userRepositories.save(user);
     }
 
     @Override
     public void delete(Long id) {
-        userDao.delete(id);
+        userRepositories.deleteById(id);
     }
 
-//
-//    Равзе это не костыли? Есть ли способ лучше?
-//
     @Override
-    @Transactional
     public void edit(User user) {
-        String oldPass = userById(user.getId()).getPassword();
-        if (passwordEncoder.matches(user.getPassword(), passwordEncoder.encode(oldPass))) {
-            user.setPassword(oldPass);
-        } else {
+        if (user.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        userDao.edit(user);
+        userRepositories.save(user);
     }
 
     @Override
     public User userById(Long id) {
-        return userDao.userById(id);
+        return userRepositories.getUserById(id);
     }
 
     @Override
     public User userByName(String name) {
-        return userDao.userByName(name);
+        return userRepositories.getUserByName(name);
     }
 }

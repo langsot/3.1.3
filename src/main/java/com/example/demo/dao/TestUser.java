@@ -15,7 +15,7 @@ import java.util.Set;
 public class TestUser {
 
     private final UserService userService;
-    private final   RoleService roleService;
+    private final RoleService roleService;
 
     @Autowired
     public TestUser(UserService userService, RoleService roleService) {
@@ -37,6 +37,7 @@ public class TestUser {
         user.setPassword("Scarlet");
         user.setAge(52);
         user.setRoles(forHisenber);
+        user.setEmail("imALagend@met.org");
         userService.add(user);
 
         Set<Role> forJessy = new HashSet<>();
@@ -47,6 +48,9 @@ public class TestUser {
         user1.setPassword("dialler777");
         user1.setAge(27);
         user1.setRoles(forJessy);
+        user1.setEmail("legalBoy@jc.com");
         userService.add(user1);
+
     }
+
 }
